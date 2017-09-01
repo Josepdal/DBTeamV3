@@ -113,7 +113,8 @@ plugins = {}
 load_plugins()
 load_lang()
 
-function bot_init(msg)
+function bot_init(msg) 
+
     receiver = msg.to.id
 
     --Idea from https://github.com/RememberTheAir/GroupButler/blob/master/bot.lua
@@ -169,48 +170,36 @@ end
 
 function user_reply_callback(msg, message)
     msg = reply_data(msg, message)
+    vardump(msg)
     bot_init(msg)
 end
-
 function reply_callback(msg, message)
-    msg.replied.id = message.sender_user_id_
-    tdcli_function ({
-        ID = "GetUser",
-        user_id_ = msg.replied.id
+    msg.replied.id = message.sender_user_id
+    tdbot_function ({
+        _ = "getUser",
+        user_id = msg.replied.id
     }, user_reply_callback, msg)
 end
 
 function user_callback(msg, message)
     msg = user_data(msg, message)
     if msg.reply_id then
-        tdcli_function ({
-            ID = "GetMessage",
-            chat_id_ = msg.to.id,
-            message_id_ = msg.reply_id
+        tdbot_function ({
+            _ = "getMessage",
+            chat_id = msg.to.id,
+            message_id = msg.reply_id
         }, reply_callback, msg)
     else
         bot_init(msg)
     end
 end
-
 -- This function is called when tg receive a msg
-function tdcli_update_callback(data)
-    if (data.ID == "UpdateNewMessage") then
-        local msgb = data.message_
-        local d = data.disable_notification_
-        local chat = chats[msgb.chat_id_]
-
-        if ((not d) and chat) then
-            if msgb.content_.ID == "MessageText" then
-                do_notify(chat.title_, msgb.content_.text_)
-            else
-                do_notify(chat.title_, msgb.content_.ID)
-            end
-        end
-		
+function tdbot_update_callback (data)
+    if (data._ == "updateNewMessage") or (data._ == "updateNewChannelMessage") then
+        local msg = data.message
 		if redis:sismember("start", "settings") then
 			redis:srem("start", "settings")
-			changeAbout("DBTeamV2 Tg-cli administration Bot\nChannels: @DBTeamEn @DBTeamEs", ok_cb)
+			changeAbout("DBTeamV3 Tg-cli administration Bot\nChannels: @DBTeamEn @DBTeamEs", ok_cb)
 			getMe(getMeCb)
 		elseif redis:sismember("load", "settings") then
 			redis:srem("load", "settings")
@@ -221,11 +210,10 @@ function tdcli_update_callback(data)
 				 openChat(chat, ok_cb)
 			end
 		end
-
         msg = oldtg(data)
-        tdcli_function ({
-            ID = "GetUser",
-            user_id_ = data.message_.sender_user_id_
+        tdbot_function ({
+            _ = "getUser",
+            user_id = data.message.sender_user_id
         }, user_callback, msg)
     end
 end

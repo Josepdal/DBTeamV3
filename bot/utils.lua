@@ -3,6 +3,7 @@ serpent = require("serpent")
 --json = (loadfile "./libs/JSON.lua")()
 
 function dl_cb (arg, data)
+    vardump (data)
 end
 
 function vardump(value, depth, key)
@@ -43,138 +44,141 @@ function ok_cb(extra, success, result)
 end
 
 function oldtg(data)
-    local msg = {}
-    msg.to = {}
-    msg.from = {}
-    msg.replied = {}
-    msg.to.id = data.message_.chat_id_
-    msg.from.id = data.message_.sender_user_id_
-    if data.message_.content_.ID == "MessageText" then
-        msg.text = data.message_.content_.text_
-        if #data.message_.content_.entities_ ~= 0 then
-            for k, v in ipairs (data.message_.content_.entities_) do
-                if v.url_ then
-                    msg.text = msg.text .. " url: " .. v.url_
+    if data.message then
+        local msg = {}
+        msg.to = {}
+        msg.from = {}
+        msg.replied = {}
+        msg.to.id = data.message.chat_id
+        msg.from.id = data.message.sender_user_id
+        if data.message.content._ == "messageText" then
+            msg.text = data.message.content.text
+            if #data.message.content.entities ~= 0 then
+                for k, v in ipairs (data.message.content.entities) do
+                    if v.url_ then
+                        msg.text = msg.text .. " url: " .. v.url_
+                    end
                 end
             end
         end
-    end
-    if data.message_.content_.caption_ then
-        msg.text = data.message_.content_.caption_
-    end
-    msg.date = data.message_.date_
-    msg.id = data.message_.id_
-    msg.unread = false
-    if data.message_.reply_to_message_id_ == 0 then
-        msg.reply_id = false
-    else
-        msg.reply_id = data.message_.reply_to_message_id_
-    end
-    if data.message_.content_.ID == "MessagePhoto" then
-        msg.photo = true
-		if data.message_.content_.photo_.sizes_[3] then 
-			msg.file_id = data.message_.content_.photo_.sizes_[3].photo_.persistent_id_
-		else
-			msg.file_id = data.message_.content_.photo_.sizes_[0].photo_.persistent_id_
-		end
-    else
-        msg.photo = false
-    end
-    if data.message_.content_.ID == "MessageSticker" then
-        msg.sticker = true
-		msg.file_id = data.message_.content_.sticker_.sticker_.persistent_id_
-    else
-        msg.sticker = false
-    end
-    if data.message_.content_.ID == "MessageAudio" then
-        msg.audio = true
-		msg.file_id = data.message_.content_.audio_.audio_.persistent_id_
-    else
-        msg.audio = false
-    end
-    if data.message_.content_.ID == "MessageVoice" then
-        msg.voice = true
-		msg.file_id = data.message_.content_.voice_.voice_.persistent_id_
-    else
-        msg.voice = false
-    end
-    if data.message_.content_.ID == "MessageAnimation" then
-        msg.gif = true
-		msg.file_id = data.message_.content_.animation_.animation_.persistent_id_
-    else
-        msg.gif = false
-    end
-    if data.message_.content_.ID == "MessageVideo" then
-        msg.video = true
-		msg.file_id = data.message_.content_.video_.video_.persistent_id_
-    else
-        msg.video = false
-    end
-    if data.message_.content_.ID == "MessageDocument" then
-        msg.document = true
-		msg.file_id = data.message_.content_.document_.document_.persistent_id_
-    else
-        msg.document = false
-    end
-    if data.message_.content_.ID == "MessageGame" then
-        msg.game = true
-    else
-        msg.game = false
-    end
-	if data.message_.forward_info_ then
-		msg.forward = true
-		msg.forward = {}
-		msg.forward.from_id = data.message_.forward_info_.sender_user_id_
-		msg.forward.msg_id = data.message_.forward_info_.data_
-	else
-		msg.forward = false
-	end
-    if data.message_.content_.ID then
-        msg.action = data.message_.content_.ID
-    end
-    if data.message_.content_.ID == "MessageChatAddMembers" or data.message_.content_.ID == "MessageChatDeleteMember" or
-        data.message_.content_.ID == "MessageChatChangeTitle" or data.message_.content_.ID == "MessageChatChangePhoto" or
-        data.message_.content_.ID == "MessageChatJoinByLink" or data.message_.content_.ID == "MessageGameScore" then
-        msg.service = true
-    else
-        msg.service = false
-    end
-    local new_members = data.message_.content_.members_
-    if new_members then
-        msg.added = {}
-        for i = 0, #new_members, 1 do
-            k = i+1
-            msg.added[k] = {}
-            msg.added[k].id = new_members[i].id_
-            if new_members[i].username_ then
-                msg.added[k].username = new_members[i].username_
-            else
-                msg.added[k].username = false
-            end
-            msg.added[k].first_name = new_members[i].first_name_
-            if new_members[i].last_name_ then
-                msg.added[k].last_name = new_members[i].last_name_
-            else
-                msg.added[k].last_name = false
+        if data.message.content.caption then
+            msg.text = data.message.content.caption
+        end
+        msg.date = data.message.date
+        msg.id = data.message.id
+        msg.unread = false
+        if data.message.reply_to_message_id == 0 then
+            msg.reply_id = false
+        else
+            msg.reply_id = data.message.reply_to_message_id
+        end
+        if data.message.content._ == "messagePhoto" then
+            msg.photo = true
+    		if data.message.content.photo.sizes[3] then 
+    			msg.file_id = data.message.content.photo.sizes[3].photo.persistent_id
+    		else
+    			msg.file_id = data.message.content.photo.sizes[0].photo.persistent_id
+    		end
+        else
+            msg.photo = false
+        end
+        if data.message.content._ == "messageSticker" then
+            msg.sticker = true
+    		msg.file_id = data.message.content.sticker.sticker.persistent_id
+        else
+            msg.sticker = false
+        end
+        if data.message.content._ == "messageAudio" then
+            msg.audio = true
+    		msg.file_id = data.message.content.audio.audio.persistent_id
+        else
+            msg.audio = false
+        end
+        if data.message.content._ == "messageVoice" then
+            msg.voice = true
+    		msg.file_id = data.message.content.voice.voice.persistent_id
+        else
+            msg.voice = false
+        end
+        if data.message.content._ == "messageAnimation" then
+            msg.gif = true
+    		msg.file_id = data.message.content.animation.animation.persistent_id
+        else
+            msg.gif = false
+        end
+        if data.message.content._ == "messageVideo" then
+            msg.video = true
+    		msg.file_id = data.message.content.video.video.persistent_id
+        else
+            msg.video = false
+        end
+        if data.message.content._ == "messageDocument" then
+            msg.document = true
+    		msg.file_id = data.message_.content_.document_.document_.persistent_id_
+        else
+            msg.document = false
+        end
+        if data.message.content._ == "MessageGame" then
+            msg.game = true
+        else
+            msg.game = false
+        end
+    	if data.message.forward_info then
+    		msg.forward = true
+    		msg.forward = {}
+    		msg.forward.from_id = data.message.forward_info.sender_user_id
+    		msg.forward.msg_id = data.message.forward_info.data
+    	else
+    		msg.forward = false
+    	end
+        if data.message.content._ then
+            msg.action = data.message.content._
+        end
+        if data.message.content._ == "messageChatAddMembers" or data.message.content._ == "messageChatDeleteMember" or
+            data.message.content._ == "messageChatChangeTitle" or data.message.content._ == "messageChatChangePhoto" or
+            data.message.content._ == "messageChatJoinByLink" or data.message.content._ == "messageGameScore" then
+            msg.service = true
+        else
+            msg.service = false
+        end
+        local new_members = data.message.content.members
+        if new_members then
+            msg.added = {}
+            for i = 0, #new_members, 1 do
+                k = i+1
+                msg.added[k] = {}
+                msg.added[k].id = new_members[i].id
+                if new_members[i].username then
+                    msg.added[k].username = new_members[i].username
+                else
+                    msg.added[k].username = false
+                end
+                msg.added[k].first_name = new_members[i].first_name
+                if new_members[i].last_name then
+                    msg.added[k].last_name = new_members[i].last_name
+                else
+                    msg.added[k].last_name = false
+                end
             end
         end
+        return msg
     end
-    return msg
+    return data
 end
 
 function user_data(msg, data)
-    if data.username_ then
-        msg.from.username = data.username_
+    if data.username then
+        msg.from.username = data.username
     else
         msg.from.username = false
     end
-    msg.from.first_name = data.first_name_
-    if data.last_name_ then
-        msg.from.last_name = data.last_name_
+    msg.from.first_name = data.first_name
+    if data.last_name then
+        msg.from.last_name = data.last_name
     else
         msg.from.last_name = false
     end
-    if msg.action == "MessageChatJoinByLink" then
+    if msg.action == "messageChatJoinByLink" then
         msg.added = {}
         msg.added[1] = {}
         msg.added[1].id = msg.from.id
@@ -186,12 +190,12 @@ function user_data(msg, data)
 end
 
 function reply_data(msg, data)
-    if data.username_ then
-        msg.replied.username = data.username_
+    if data.username then
+        msg.replied.username = data.username
     end
-    msg.replied.first_name = data.first_name_
-    if data.last_name_ then
-        msg.replied.last_name = data.last_name_
+    msg.replied.first_name = data.first_name
+    if data.last_name then
+        msg.replied.last_name = data.last_name
     end
     return msg
 end
