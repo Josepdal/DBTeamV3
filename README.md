@@ -45,6 +45,19 @@ After installing the dependencies, lets install the bot:
  cd DBTeamV3
  chmod +x launch.sh
  ./launch.sh install
+ ```
+ For now add the following code manually into .telegram-bot/config file (create it if it is not already created).
+ Modify $home with your $home (write root if you have no idea about this) -> /root/DBTea...
+```
+default_profile = "main";
+
+main = {
+	lua_script = "/$HOME/DBTeamV3/bot/bot.lua";
+};
+```
+
+
+ ```
  ./launch.sh login # Will ask you for a phone number & confirmation code.
  ./launch.sh
 ```
