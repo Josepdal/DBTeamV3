@@ -35,7 +35,7 @@ Using [DBTeamV3](https://github.com/Josepdal/DBTeamV3) you will get all [DBTeamV
 Debian/Ubuntu and derivatives:
 ```bash
 # Tested on Ubuntu 16.04
-sudo apt-get install git redis-server lua5.2 liblua5.2-dev lua-lgi libconfig++9v5 libstdc++6 unzip tmux -y && add-apt-repository ppa:ubuntu-toolchain-r/test && sudo apt-get update && apt-get upgrade
+sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install git redis-server lua5.2 liblua5.2-dev lua-lgi libnotify-dev unzip tmux -y && add-apt-repository ppa:ubuntu-toolchain-r/test && sudo apt-get update && apt-get upgrade && sudo apt-get install libconfig++9v5 libstdc++6 && sudo apt autoremove
 ```                   
 ---------------------------------
 
