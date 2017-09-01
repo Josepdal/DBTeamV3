@@ -1,7 +1,7 @@
 #!/bin/bash
 # Launch created by @Jarriz, @Josepdal and @iicc1
-tgcli_version=1222
-TMUX_SESSION=DBTeamV2
+
+tgcli_version=170831
 luarocks_version=2.4.2
 
 lualibs=(
@@ -39,19 +39,6 @@ get_sub() {
     done
 }
 
-get_firstname_by_username() {
-	user=`./bin/telegram-cli --disable-link-preview -C -R -D -e \
-	'resolve_username '${1}'' 2>/dev/null`
-    space_index=`echo ${user} | tr -cd ' '  | wc -c`
-	msg=null
-	if [[ ! ${user} ]] || [[ ${user} =~ 400 ]]; then
-		echo $msg
-	else
-		msg=`echo ${user} | cut -d ' ' -f${space_index}- | cut -d ' ' -f1`
-		echo "${msg}"
-	fi
-}
-
 make_progress() {
 exe=`lua <<-EOF
     print(tonumber($1)/tonumber($2)*100)
@@ -59,8 +46,6 @@ EOF
 `
     echo ${exe:0:4}
 }
-
-
 
 function download_libs_lua() {
     if [[ ! -d "logs" ]]; then mkdir logs; fi
@@ -74,12 +59,6 @@ function download_libs_lua() {
     sleep 0.2
     printf "\nLogfile created: $PWD/logs/logluarocks_${today}.txt\nDone\n"
     rm -rf luarocks-2.2.2*
-}
-
-function update() {
-    git checkout launch.sh plugins/ lang/ bot/ libs/
-    git pull
-    echo chmod +x launch.sh | /bin/bash
 }
 
 function configure() {
@@ -103,9 +82,9 @@ function configure() {
     cd ..; rm -rf luarocks*
     if [[ ${1} != "--no-download" ]]; then
         download_libs_lua
-        wget --progress=bar:force https://valtman.name/files/telegram-cli-${tgcli_version} 2>&1 | get_sub
+        wget --progress=bar:force https://valtman.name/files/telegram-bot-${tgcli_version}-linux 2>&1 | get_sub
         if [ ! -d "bin" ]; then mkdir bin; fi
-        mv telegram-cli-${tgcli_version} ./bin/telegram-cli; chmod +x ./bin/telegram-cli
+        mv telegram-bot-${tgcli_version}-linux telegram-bot; chmod +x telegram-bot
     fi
     for ((i=0;i<101;i++)); do
         printf "\rConfiguring... [%i%%]" $i
@@ -115,7 +94,11 @@ function configure() {
 }
 
 function start_bot() {
-    ./bin/telegram-cli -s ./bot/bot.lua $@
+    ./telegram-bot
+}
+
+function login_bot() {
+    ./telegram-bot -p main --login --phone=${1}
 }
 
 function show_logo_slowly() {
@@ -124,7 +107,7 @@ function show_logo_slowly() {
     " ____  ____ _____"
     "|    \|  _ )_   _|___ ____   __  __"
     "| |_  )  _ \ | |/ .__|  _ \_|  \/  |"
-    "|____/|____/ |_|\____/\_____|_/\/\_|  v2"
+    "|____/|____/ |_|\____/\_____|_/\/\_|  v3"
     "by @Josepdal @iicc1 and @Jarriz"
     )
     printf "\033[38;5;208m\t"
@@ -145,7 +128,7 @@ function show_logo() {
     echo -e "\t ____  ____ _____"
     echo -e "\t|    \|  _ )_   _|___ ____   __  __"
     echo -e "\t| |_  )  _ \ | |/ .__|  _ \_|  \/  |"
-    echo -e "\t|____/|____/ |_|\____/\_____|_/\/\_|  v2"
+    echo -e "\t|____/|____/ |_|\____/\_____|_/\/\_|  v3"
     echo -e "\n\e[36m"
 }
 
@@ -154,32 +137,11 @@ case $1 in
     	show_logo_slowly
     	configure ${2}
     	exit ;;
-    update)
-    	show_logo
-    	update
-    	exit ;;
-    tmux)
-    	if [ ! -f "/usr/bin/tmux" ]; then echo "Please install tmux"; exit; fi
-    	error=`tmux new-session -s $TMUX_SESSION -d "./bin/telegram-cli -s ./bot/bot.lua" 2>/dev/stdout`
-    	if [[ ! $error ]]; then echo "New session tmux: ${TMUX_SESSION}"; else echo "Error running tmux."; fi
-    	exit ;;
-    attach)
-    	if [ ! -f "/usr/bin/tmux" ]; then echo "Please install tmux"; exit; fi
-		tmux attach-session -t $TMUX_SESSION
-		exit ;;
-    kill)
-    	if [ ! -f "/usr/bin/tmux" ]; then echo "Please install tmux"; exit; fi
-    	tmux kill-session -t $TMUX_SESSION
-    	exit ;;
-    whois)
-        name=`get_firstname_by_username "${2}"`
-        if [[ $name == null ]]; then
-        	echo "Error resolving the user."
-        	exit 1
-        else
-        	echo "${name}"
-        	exit 0
-        fi ;;
+    login)
+        echo "Please enter your phone number: "
+        read phone_number
+        login_bot ${phone_number}
+        exit ;;
 esac
 
 
