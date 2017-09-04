@@ -24,8 +24,8 @@ local function get_added_users(msg)
 end
 
 function adduser_cb(chat, data)
-	redis:del("ban:" .. msg.to.id .. ":" .. data.id_)
-	addChatMember(chat, data.id_)
+	redis:del("ban:" .. chat .. ":" .. data.id)
+	addChatMember(chat, data.id)
 end
 
 function send_report(msg,reason)
@@ -40,16 +40,16 @@ function send_report(msg,reason)
 end
 
 local function get_exported_link(arg, data)
-	if data.message_ then
+	if data.message then
 		send_msg(arg, lang_text(arg, 'linkError'), 'md')
 	else
-		redis:set("settings:link:" .. msg.to.id, data.invite_link_)
+		redis:set("settings:link:" .. arg, data.invite_link)
 		send_msg(arg, lang_text(arg, 'linkSet'), 'md')
 	end
 end
 
 local function getlink(arg,data)
-	local link = data.invite_link_
+	local link = data.invite_link
 	send_msg(msg.to.id, link, 'html')
 end
 
@@ -554,8 +554,8 @@ local function run(msg, matches)
 				send_msg(msg.to.id, lang_text(msg.to.id, 'floodMax') .. ": `" .. matches[2] .. "`", 'md')
 			end
 		elseif matches[1]:lower() == "setlink" and matches[2] and permissions(msg.from.id, msg.to.id, "settings") then
-				redis:set("settings:link:" .. msg.to.id, matches[2])
-				send_msg(msg.to.id, lang_text(msg.to.id, 'linkSet'), 'md')
+			redis:set("settings:link:" .. msg.to.id, matches[2])
+			send_msg(msg.to.id, lang_text(msg.to.id, 'linkSet'), 'md')
 		elseif matches[1]:lower() == "newlink" and not matches[2] and permissions(msg.from.id, msg.to.id, "settings") then
 			export_link(msg.to.id, get_exported_link, msg.to.id)
 		elseif matches[1]:lower() == "link" and not matches[2] then

@@ -185,7 +185,7 @@ function kick_user(chat_id, user_id)
     	chat_id = chat_id,
     	user_id = user_id,
     	status = {
-      		_ = "chatMemberStatusKicked"
+      		_ = "chatMemberStatusBanned"
     	},
   	}, dl_cb, nil)
 end
