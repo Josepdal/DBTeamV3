@@ -90,6 +90,13 @@ function configure() {
         printf "\rConfiguring... [%i%%]" $i
         sleep 0.007
     done
+    mkdir $HOME/.telegram-bot; cat <<EOF > $HOME/.telegram-bot/config
+default_profile = "main";
+
+main = {
+  lua_script = "$HOME/DBTeamV3/bot/bot.lua";
+};
+EOF
     printf "\nDone\n"
 }
 
@@ -136,12 +143,12 @@ case $1 in
     install)
     	show_logo_slowly
     	configure ${2}
-    	exit ;;
+    exit ;;
     login)
         echo "Please enter your phone number: "
         read phone_number
         login_bot ${phone_number}
-        exit ;;
+    exit ;;
 esac
 
 
