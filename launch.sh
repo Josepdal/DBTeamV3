@@ -1,7 +1,7 @@
 #!/bin/bash
 # Launch created by @Jarriz, @Josepdal and @iicc1
 
-tgcli_version=170831
+tgcli_version="170904-nightly"
 luarocks_version=2.4.2
 
 lualibs=(
@@ -83,7 +83,6 @@ function configure() {
     if [[ ${1} != "--no-download" ]]; then
         download_libs_lua
         wget --progress=bar:force https://valtman.name/files/telegram-bot-${tgcli_version}-linux 2>&1 | get_sub
-        if [ ! -d "bin" ]; then mkdir bin; fi
         mv telegram-bot-${tgcli_version}-linux telegram-bot; chmod +x telegram-bot
     fi
     for ((i=0;i<101;i++)); do
@@ -92,7 +91,6 @@ function configure() {
     done
     mkdir $HOME/.telegram-bot; cat <<EOF > $HOME/.telegram-bot/config
 default_profile = "main";
-
 main = {
   lua_script = "$HOME/DBTeamV3/bot/bot.lua";
 };
@@ -106,6 +104,16 @@ function start_bot() {
 
 function login_bot() {
     ./telegram-bot -p main --login --phone=${1}
+}
+
+function update_bot() {
+	wget --progress=bar:force https://valtman.name/files/telegram-bot-${tgcli_version}-linux 2>&1 | get_sub
+    mv telegram-bot-${tgcli_version}-linux telegram-bot; chmod +x telegram-bot
+}
+
+function update_bot_to() {
+	wget --progress=bar:force https://valtman.name/files/telegram-bot-${1}-linux 2>&1 | get_sub
+    mv telegram-bot-${1}-linux telegram-bot; chmod +x telegram-bot
 }
 
 function show_logo_slowly() {
@@ -143,12 +151,28 @@ case $1 in
     install)
     	show_logo_slowly
     	configure ${2}
-    exit ;;
+    	exit ;;
     login)
         echo "Please enter your phone number: "
         read phone_number
         login_bot ${phone_number}
-    exit ;;
+        exit ;;
+    update)
+		update_bot
+		exit ;;
+	update-to)
+		echo "Please enter bot version: "
+        read bot_version
+		update_bot_to  ${bot_version}
+		exit ;;
+	help)
+		echo "Commands available:"
+		echo "	install - First command to install all repos and download binary."
+		echo "	login - Access into your telegram account."
+		echo "	update - Update to the last DBTeamV3 support binary."
+		echo "	update-to - Write a version to update binary (from vysheng website)."
+		echo "	help - Shows this message."
+		exit ;;
 esac
 
 
