@@ -127,7 +127,7 @@ function getChats(offset_order, offset_chat_id, limit, cb, cmd)
 	    _ = "getChats",
 	    offset_order = offset_order or 9223372036854775807,
 	    offset_chat_id = offset_chat_id or 0,
-	    limit_ = limit
+	    limit = limit
   	}, cb or dl_cb, cmd)
 end
 
@@ -159,7 +159,7 @@ end
 function changeAbout(about, cb, cmd)
  	tdbot_function ({
     	_ = "changeAbout",
-    	about_ = about
+    	about = about
   	}, cb or dl_cb, cmd)
 end
 
@@ -168,7 +168,7 @@ function pin_msg(channel_id, message_id, disable_notification)
     	_ = "pinChannelMessage",
     	channel_id = getChatId(channel_id)._,
     	message_id = message_id,
-    	disable_notification_ = disable_notification
+    	disable_notification = disable_notification
   	}, dl_cb, nil)
 end
 
@@ -196,7 +196,7 @@ function promoteToAdmin(chat_id, user_id)
     	chat_id = chat_id,
     	user_id = user_id,
     	status = {
-      		_ = "chatMemberStatusModerator"
+      		_ = "chatMemberStatusAdministrator"
     	},
   	}, dl_cb, nil)
 end
@@ -304,7 +304,7 @@ function getChannelMembers(channel_id, offset, filter, limit, cb_function, cb_ex
     	_ = "getChannelMembers",
     	channel_id = getChatId(channel_id)._,
     	filter = {
-      		_ = "channelMembers" .. filter
+      		_ = "channelMembersFilter" .. filter
     	},
     	offset = offset,
     	limit = limit
@@ -405,11 +405,11 @@ end
 
 function getInputFile(file)
     if file:match('/') then
-        infile = {_ = "InputFileLocal", path_ = file}
+        infile = {_ = "InputFileLocal", path = file}
     elseif file:match('^%d+$') then
-        infile = {_ = "InputFileId", id_ = file}
+        infile = {_ = "InputFileId", id = file}
     else
-        infile = {_ = "InputFilePersistentId", persistent_id_ = file}
+        infile = {_ = "InputFilePersistentId", persistent_id = file}
     end
     return infile
 end
@@ -417,9 +417,9 @@ end
 function sendSticker(chat_id, reply_to_message_id, disable_notification, from_background, reply_markup, sticker, cb, cmd)
 	local input_message_content = {
     	_ = "inputMessageSticker",
-    	sticker_ = getInputFile(sticker),
-    	width_ = 0,
-    	height_ = 0
+    	sticker = getInputFile(sticker),
+    	width = 0,
+    	height = 0
   	}
   	sendRequest('SendMessage', chat_id, reply_to_message_id, disable_notification, from_background, reply_markup, input_message_content, cb, cmd)
 end
@@ -498,7 +498,7 @@ function sendVideo(chat_id, video, caption)
 	local input_message_content = {
 		_ = "inputMessageVideo",
     	video = getInputFile(video),
-    	added_sticker_file_ids_ = {},
+    	added_sticker_file_ids = {},
     	duration = duration or 0,
     	width = width or 0,
     	height = height or 0,
