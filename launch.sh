@@ -5,17 +5,7 @@ tgcli_version="170904-nightly"
 luarocks_version=2.4.2
 
 lualibs=(
-'luasec'
-'luarepl'
-'lbase64 20120807-3'
-'luafilesystem'
-'lub'
-'luaexpat'
 'redis-lua'
-'lua-cjson'
-'fakeredis'
-'xml'
-'feedparser'
 'serpent'
 )
 
@@ -45,6 +35,10 @@ exe=`lua <<-EOF
 EOF
 `
     echo ${exe:0:4}
+}
+
+function get_tgcli_version() {
+	echo "$tgcli_version"
 }
 
 function download_libs_lua() {
@@ -107,8 +101,11 @@ function login_bot() {
 }
 
 function update_bot() {
-	wget --progress=bar:force https://valtman.name/files/telegram-bot-${tgcli_version}-linux 2>&1 | get_sub
-    mv telegram-bot-${tgcli_version}-linux telegram-bot; chmod +x telegram-bot
+  git checkout launch.sh plugins/ lang/ bot/ libs/
+  git pull
+  echo chmod +x launch.sh | /bin/bash
+  version=$(echo "./launch.sh tgcli_version" | /bin/bash)
+  update_bot_to $version
 }
 
 function update_bot_to() {
@@ -151,12 +148,12 @@ case $1 in
     install)
     	show_logo_slowly
     	configure ${2}
-    	exit ;;
+    exit ;;
     login)
         echo "Please enter your phone number: "
         read phone_number
         login_bot ${phone_number}
-        exit ;;
+    exit ;;
     update)
 		update_bot
 		exit ;;
@@ -164,7 +161,10 @@ case $1 in
 		echo "Please enter bot version: "
         read bot_version
 		update_bot_to  ${bot_version}
-		exit ;;
+	exit ;;
+	tgcli_version)
+		get_tgcli_version
+	exit ;;
 	help)
 		echo "Commands available:"
 		echo "	install - First command to install all repos and download binary."
@@ -172,7 +172,7 @@ case $1 in
 		echo "	update - Update to the last DBTeamV3 support binary."
 		echo "	update-to - Write a version to update binary (from vysheng website)."
 		echo "	help - Shows this message."
-		exit ;;
+	exit ;;
 esac
 
 
