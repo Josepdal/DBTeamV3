@@ -93,12 +93,10 @@ end
 function load_lang()
     for k, v in pairs(_config.enabled_lang) do
         print('\27[92mLoading language '.. v..'\27[39m')
-
         local ok, err = pcall(function()
         local t = loadfile("./lang/"..v..'.lua')()
             plugins[v] = t
         end)
-
         if not ok then
             print('\27[31mError loading language '..v..'\27[39m')
             print(tostring(io.popen("lua lang/"..v..".lua"):read('*all')))
@@ -114,55 +112,48 @@ load_plugins()
 load_lang()
 
 function bot_init(msg) 
-
-    receiver = msg.to.id
-
+    local receiver = msg.to.id
     --Idea from https://github.com/RememberTheAir/GroupButler/blob/master/bot.lua
     if msg.from then
+        redis:sadd('chat:' .. receiver .. ':members', msg.from.id)
         if msg.from.username then
             redis:hset('bot:usernames', '@'..msg.from.username:lower(), msg.from.id)
             redis:hset('bot:ids', msg.from.id, '@'.. msg.from.username:lower())
-        else
+        elseif msg.from.first_name then
         	redis:hset('bot:usernames', '@' .. msg.from.first_name:lower(), msg.from.id)
         	redis:hset('bot:ids', msg.from.id, msg.from.first_name:lower())
         end
-        redis:sadd('chat:' .. msg.to.id .. ':members', msg.from.id)
     end
-
     if msg.added then
         for i = 1, #msg.added, 1 do
-            redis:sadd('chat:' .. msg.to.id .. ':members', msg.added[i].id)
+            redis:sadd('chat:' .. receiver .. ':members', msg.added[i].id)
         end
     end
-
     if msg.reply_id then
-        redis:sadd('chat:' .. msg.to.id .. ':members', msg.replied.id)
+        redis:sadd('chat:' .. receiver .. ':members', msg.replied.id)
 		if msg.replied.username then
 			redis:hset('bot:usernames', '@'.. msg.replied.username:lower(), msg.replied.id)
 			redis:hset('bot:ids', msg.replied.id, '@'..msg.replied.username:lower())
-		else
+		elseif msg.replied.first_name then
 			redis:hset('bot:usernames', msg.replied.first_name:lower(), msg.replied.id)
 			redis:hset('bot:ids', msg.replied.id, msg.replied.first_name:lower())
 		end
     end
-
-    if msg.to.id ~= msg.from.id then 		-- If it is not a private chat
-        redis:sadd('chats:ids', msg.to.id)
+    if receiver ~= msg.from.id then 		-- If it is not a private chat
+        redis:sadd('chats:ids', receiver)
     end
-
     if _config.our_id == msg.from.id then
         msg.from.id = 0
     end
-
     if msg_valid(msg) then
         msg = pre_process_msg(msg)
         if msg then
-			if msg.from.id == msg.to.id then 	-- match special plugins in private
+			if msg.from.id == receiver then 	-- match special plugins in private
 				match_plugin(plugins.private, private, msg)
 			else
 				match_plugins(msg)
 			end
-			mark_as_read(msg.to.id, {[0] = msg.id})
+			mark_as_read(receiver, {[0] = msg.id})
         end
     end
 
@@ -170,9 +161,9 @@ end
 
 function user_reply_callback(msg, message)
     msg = reply_data(msg, message)
-    vardump(msg)
     bot_init(msg)
 end
+
 function reply_callback(msg, message)
     msg.replied.id = message.sender_user_id
     tdbot_function ({
@@ -193,6 +184,7 @@ function user_callback(msg, message)
         bot_init(msg)
     end
 end
+
 -- This function is called when tg receive a msg
 function tdbot_update_callback (data)
     if (data._ == "updateNewMessage") or (data._ == "updateNewChannelMessage") then
