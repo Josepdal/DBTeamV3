@@ -93,7 +93,7 @@ EOF
 }
 
 function start_bot() {
-    ./telegram-bot
+    ./telegram-bot | grep -v "{"
 }
 
 function login_bot() {

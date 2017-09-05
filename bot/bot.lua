@@ -111,8 +111,20 @@ plugins = {}
 load_plugins()
 load_lang()
 
-function bot_init(msg) 
+function bot_init(msg)
     local receiver = msg.to.id
+    local text = msg.text or "[other]"
+    if msg.photo then text = "[photo]"
+    elseif msg.sticker then text = "[sticker]"
+    elseif msg.voice then text = "[voice]"
+    elseif msg.gif then text = "[gif]"
+    elseif msg.video then text = "[video]"
+    elseif msg.document then text = "[document]"
+    elseif msg.game then text = "[game]"
+    end
+    local user = msg.from.first_name or msg.from.username or ""
+    print("\27[0;35m[" .. os.date("%X") .. "] \27[1;31m" .. msg.to.title .."  \27[0;33m" .. user .." \27[39m »", '\27[0;34m' .. text .. '\27[39m')
+
     --Idea from https://github.com/RememberTheAir/GroupButler/blob/master/bot.lua
     if msg.from then
         redis:sadd('chat:' .. receiver .. ':members', msg.from.id)
@@ -159,9 +171,21 @@ function bot_init(msg)
 
 end
 
+function chat_info(msg)
+    tdbot_function ({
+        _ = "getChat",
+        chat_id = msg.to.id,
+    }, chat_info_cb, msg)
+end
+
+function chat_info_cb(msg, data)
+    msg.to.title = data.title
+    bot_init(msg)
+end
+
 function user_reply_callback(msg, message)
     msg = reply_data(msg, message)
-    bot_init(msg)
+    chat_info(msg)
 end
 
 function reply_callback(msg, message)
@@ -181,7 +205,7 @@ function user_callback(msg, message)
             message_id = msg.reply_id
         }, reply_callback, msg)
     else
-        bot_init(msg)
+        chat_info(msg)
     end
 end
 
