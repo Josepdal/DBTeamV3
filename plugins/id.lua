@@ -13,7 +13,7 @@ end
 
 
 function getID_by_reply_cb(arg, msg)
-    send_msg(msg.chat_id_, lang_text(msg.chat_id_, 'userID') .. " " .. msg.sender_user_id_ .. "\n" .. lang_text(msg.chat_id_, 'chatID') .. " " .. msg.chat_id_, "md")
+    send_msg(msg.chat_id, lang_text(msg.chat_id, 'userID') .. " " .. msg.sender_user_id .. "\n" .. lang_text(msg.chat_id, 'chatID') .. " " .. msg.chat_id, "md")
 end
 
 local function run(msg, matches)
@@ -34,17 +34,17 @@ end
 
 function getIdUsername(chat, data)
   if data.ID == "Error" then
-    send_msg(chat, "*Error:* `" .. data.message_ .. "`", "md")
+    send_msg(chat, "*Error:* `" .. data.message .. "`", "md")
   else
-    send_msg(chat, "*Alias:* @" .. data.user_.username_ , "md")
+    send_msg(chat, "*Alias:* @" .. data.user.username , "md")
   end
 end
 
 function getUsernameId(chat, data)
   if data.ID == "Error" then
-    send_msg(chat, "*Error:* `" .. data.message_ .. "`", "md")
+    send_msg(chat, "*Error:* `" .. data.message .. "`", "md")
   else
-    send_msg(chat, "*ID:* `" .. data.id_ .. "`", "md")
+    send_msg(chat, "*ID:* `" .. data.id .. "`", "md")
   end
 end
 
