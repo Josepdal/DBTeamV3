@@ -114,7 +114,7 @@ function oldtg(data)
         end
         if data.message.content._ == "messageDocument" then
             msg.document = true
-    		msg.file_id = data.message_.content_.document_.document_.persistent_id_
+    		msg.file_id = data.message.content.document.document.persistent_id
         else
             msg.document = false
         end
