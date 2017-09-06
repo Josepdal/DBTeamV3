@@ -123,7 +123,7 @@ function bot_init(msg)
     elseif msg.game then text = "[game]"
     end
     local user = msg.from.first_name or msg.from.username or ""
-    print("\27[0;35m[" .. os.date("%X") .. "] \27[1;31m" .. msg.to.title .."  \27[0;33m" .. user .." \27[39m »", '\27[0;34m' .. text .. '\27[39m')
+	print("\27[0;35m[" .. os.date("%X") .. "] \27[1;31m" .. msg.to.title .." \27[0;33m" .. user .." \27[39m » \27[0;34m" .. text .. "\27[39m")
 
     --Idea from https://github.com/RememberTheAir/GroupButler/blob/master/bot.lua
     if msg.from then
@@ -168,7 +168,6 @@ function bot_init(msg)
 			mark_as_read(receiver, {[0] = msg.id})
         end
     end
-
 end
 
 function chat_info(msg)

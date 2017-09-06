@@ -9,7 +9,7 @@
 
 ### An administration Telegram bot using Telegram-cli
 
-DBTeamV2 is a a powerful administration userbot that uses [telegram-bot](https://valtman.name/telegram-bot).  
+DBTeamV3 is a a powerful administration userbot that uses [telegram-bot](https://valtman.name/telegram-bot).  
 It is programmed in [Lua](https://www.lua.org/) and uses the rapid [Redis](https://redis.io/) database.
 
 The difference among the old [DBTeamV1](https://github.com/Josepdal/DBTeamV1) and [DBTeamV2](https://github.com/Josepdal/DBTeamV2) is that this one uses a much newer *Tg-Cli* with new stuff and also the bot has improved in usability, stability and has new functions.
@@ -53,13 +53,13 @@ After installing the dependencies, lets install the bot:
  ./launch.sh
 ```
 
-DBTeamV2 Developers:
+DBTeamV3 Developers:
 --------------------
 [![https://telegram.me/Josepdal](https://img.shields.io/badge/%F0%9F%92%AC_Telegram-Josepdal-blue.svg)](https://t.me/Josepdal)
 [![https://telegram.me/Jarriz](https://img.shields.io/badge/%F0%9F%92%AC_Telegram-Jarriz-blue.svg)](https://t.me/Jarriz)
 [![https://telegram.me/iicc1](https://img.shields.io/badge/%F0%9F%92%AC_Telegram-iicc1-blue.svg)](https://t.me/iicc1)
 
-DBTeamV2 Channels:
+DBTeamV3 Channels:
 --------------------
 [![https://telegram.me/DBTeamEN](https://img.shields.io/badge/%F0%9F%92%AC_Telegram-DBTeamEN-blue.svg)](https://t.me/DBTeamEN)
 [![https://telegram.me/DBTeamES](https://img.shields.io/badge/%F0%9F%92%AC_Telegram-DBTeamES-blue.svg)](https://t.me/DBTeamES)
