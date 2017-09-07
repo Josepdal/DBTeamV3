@@ -56,12 +56,6 @@ function download_libs_lua() {
 }
 
 function configure() {
-    if [[ -f "/usr/bin/lua5.3" ]] || [[ -f "/usr/bin/lua5.1" ]] || [[ -f "/usr/local/bin/lua5.3" ]]; then
-        echo -e "\033[0;31mError\033[0m":\
-        "DBTeam ins't working with lua5.3 and others versions, the packages must be removed,"\
-        "please remove them, reinstall lua5.2 and run launch.sh again."
-        exit 1
-    fi
     dir=$PWD
     wget http://luarocks.org/releases/luarocks-${luarocks_version}.tar.gz &>/dev/null
     tar zxpf luarocks-${luarocks_version}.tar.gz &>/dev/null
